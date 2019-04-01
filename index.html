@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,4 +10,614 @@
 <body>
     
 </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Where To? Roadtrip App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="./routeboxer.js"></script>
+
+    <style>
+
+        .navbar {
+        margin-bottom: 0;
+        border-radius: 0;
+        }
+    
+        #right-panel {
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 0px;
+        }
+        #right-panel select, #right-panel input {
+            font-size: 15px;
+        }
+        #right-panel select {
+            width: 100%;
+        }
+        #right-panel i {
+            font-size: 12px;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            margin-top:0px;
+            padding: 0;
+        }
+
+        /*input field */
+        input[type=text], input[type=password] {
+        width: 30%;
+        padding: 3px;
+        margin: 5px 0 22px 0;
+        display: inline-block;
+        border: none;
+        background: #f1f1f1;
+        }
+
+        /* Add a background color on input focus */
+        input[type=text]:focus, input[type=password]:focus {
+        background-color: #ddd;
+        outline: none;
+        }
+
+        /* Set a style for all buttons */
+        button {
+        background-color: #ffa620;
+        color: black;
+        /* font-weight: bold; */
+        padding: 3px 10px;
+        /* margin: 8px 0px; */
+        border: none;
+        cursor: pointer;
+        /* width: 144px; */
+        /* opacity: 0.9; */
+        float: left;
+        }
+        .newwaypoint {
+            margin-bottom: 8px;
+        }
+
+        /* cancel button styles */
+        .cancelbtn {
+        padding: 14px 20px;
+        background-color: #6699ff;
+        }
+
+        /* Float cancel and signup buttons */
+        .cancelbtn, .signupbtn {
+        float: left;
+        width: 10%;
+        }
+
+        /* Add padding to container elements */
+        .container {
+        padding: 16px;
+        }
+
+      #map {
+        /* margin: auto; */
+        margin-top: 16px;
+        float: left;
+        width: 74%;
+        height: 80%;
+
+      }
+      #right-panel {
+        margin: 16px;
+        /* border-width: 2px; */
+        width: 23%;
+        /* height: 200px; */
+        float: left;
+        text-align: left;
+        padding-top: 0;
+      }
+      #directions-panel {
+        margin-top: 10px;
+        /* background-color: #FFEE77; */
+        padding: 10px;
+        /* overflow: scroll; */
+        /* height: 174px; */
+        display: none;
+      }
+      #campgrounds {
+          display: none;
+          border-style: solid;
+          border-color: #ffa620;
+          border-width: 1px;
+      }
+      /* #addstop {
+        position: relative;
+        float: left;
+      }
+      #addstops {
+        float: left;
+      } */
+      #header {
+          background-color: #ffa620;
+      }
+      #login {
+          background-color: #ffa620;
+      }
+    
+   
+
+    </style>
+</head>
+
+<body>
+    <!-- <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar"></button>
+                <a class="navbar-brand" href="#">Where To? Roadtrip</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#">Download App</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav> -->
+
+    <div id="header" class="vw-100 text-center p-3 display-3 font-weight-bold border border-dark">
+        WhereTo: Plan Your Perfect Camping Roadtrip
+    </div>
+    <div id="right-panel">
+        <div id="login" class="p-2 mb-2 border border-dark">
+            <input id="txtEmail" type="email" placeholder="Email">
+            <input id="txtPassword" type="password" placeholder="Password"><br>
+            <button id="btnLogin" class="btn btn-dark mr-2">Log in</button>
+            <button id="btnSignUp" class="btn btn-dark mr-2">New Sign Up</button>
+            <button id="btnLogOut" class="btn btn-light hide">Log out</button>
+            <br><br>
+        </div>
+        <div id="info-entry" class="bg-dark text-white p-2">
+            <h2>Where To?</h2>
+            <b>Start:</b> <br>
+            <input class="mb-2 float-left" id="start"></input>
+            <button class="ml-2 mb-2" id="addstop" name="waypoints" type="submit" value="HTML">Add Stop </button>
+            <br>
+            <div class="mr-4 mb-2" id="addstops"></div>
+            <!-- <button class="mb-2" id="addstop" name="waypoints" type="submit" value="HTML">Add Stop </button> -->
+            <br>
+            <b>End:</b> <br>
+            <input class="mb-2 float-left" id="end"></input>
+            </select>
+            <!-- <br> -->
+            <button class="ml-2 float-left" id="submit" name="submit" type="submit" value="HTML">Find Your Route</button>
+            <br><br>
+
+        </div>
+        <!-- <div class="city"></div>
+        <div class="temp"></div> -->
+        <div class="border border-dark" id="directions-panel"></div>
+        <div class="bg-light p-2 mt-2" id="campgrounds">CAMPGROUNDS ON YOUR ROUTE:<br></div>
+
+    </div>
+    <div id="map"></div>
+    <div id="lastTrips" class="float-right p-3 m-2 bg-dark text-white"></div>
+    <div id="lastCampgrounds" class="float-right p-3 m-2 bg-dark text-white"></div>
+
+    <script>
+        // console.log(RouteBoxer);
+        var latArray = [];
+        var lngArray = [];
+        var markers = [];
+        var tripdays;
+        var cityArray = [];
+        var cityTemp = [];
+        var checkboxArray = [];
+        // var tripdays = $("#tripdays").val();
+        // console.log(tripdays);
+
+        var map;
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyCJ5AUAec0lqTFvGmAuTS83TaVR3LPDxak",
+            authDomain: "whereto-d2fee.firebaseapp.com",
+            databaseURL: "https://whereto-d2fee.firebaseio.com",
+            projectId: "whereto-d2fee",
+            storageBucket: "whereto-d2fee.appspot.com",
+            messagingSenderId: "179070727740"
+        };
+        firebase.initializeApp(config);
+
+
+        var login = $("#btnLogin");
+        var signUp = $("#btnSignUp");
+        var logOut = $("#btnLogOut");
+        var submit = $("#submit");
+
+        var database = firebase.database();
+        var auth = firebase.auth();
+        var clearBtn = $("<button>").addClass("remove btn btn-secondary").text("Clear");
+
+        console.log($("#btnLogin"));
+        document.getElementById("btnLogin");
+
+        console.log(document.getElementById("btnLogin"));
+        $("#btnLogin").on("click", function (e) {
+            $("#txtEmail").css("display", "none");
+            $("#txtPassword").css("display", "none");
+            $("#btnLogin").css("display", "none");
+            $("#btnSignUp").css("display", "none");
+            console.log("Login clicked");
+            var email = $("#txtEmail").val().trim();
+            var pass = $("#txtPassword").val().trim();
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(result => {
+                    // window.location.replace("nancyui.html")
+                    // $("#txtEmail").css("display", "none");
+                    // $("#txtPassword").css("display", "none");
+                    // $("#btnLogin").css("display", "none");
+                    // $("#btnSignUp").css("display", "none");
+                    info()
+
+                });
+        });
+
+        function newUserSignIn() {
+            $("#txtEmail").css("display", "none");
+            $("#txtPassword").css("display", "none");
+            $("#btnLogin").css("display", "none");
+            $("#btnSignUp").css("display", "none");
+            auth.signInWithEmailAndPassword(email, pass);
+        }
+
+        // console.log($("#btnSignUp"));
+        $(signUp).on("click", e => {
+            console.log("workingsignup");
+            console.log($("#txtEmail"));
+            var email = $("#txtEmail").val().trim();
+            var pass = $("#txtPassword").val().trim();
+            console.log(email);
+            console.log(pass);
+            auth.createUserWithEmailAndPassword(email, pass)
+
+
+                .then(result => {
+                    // $("#btnSignUp").css("display", "none");
+                    console.log("successfully created user");
+                    var user = auth.currentUser;
+                    var addedUser = database.ref("users/" + user.uid).set({
+                        email: user.email,
+                        userId: user.uid
+                    });
+                    newUserSignIn()
+                })
+                .catch(e => console.log(e.message));
+
+        });
+
+        function info() {
+            var user = auth.currentUser;
+            var uid = user.uid;
+            console.log("successfully logged in");
+
+            var tripref = database.ref('/trips');
+            var campref = database.ref('/campsites');
+            tripref.orderByChild("userId").equalTo(uid).on('value', gotData, errData);
+            campref.orderByChild("userId").equalTo(uid).on('value', gotData1, errData);
+
+            function gotData(data) {
+                var trips = data.val();
+                Object.values(trips).forEach(function (t) {
+                    // console.log("next loop")
+                    // console.log(t)
+                    var destinations = (t.trip)
+                    var start = (t.startLocation)
+                    var end = (t.endLocation)
+                    $("#lastTrips").append(destinations + ' - ');
+                })
+            }
+            function gotData1(data) {
+                var trips = data.val();
+                console.log(trips);
+                Object.values(trips).forEach(function (t) {
+                    // console.log("next loop")
+                    // console.log(t)
+                    var address = (t.address)
+                    var name = (t.name)
+                    var rating = (t.rating)
+                    $("#lastCampgrounds").append(name + '<br>' + address + '<br>' + rating + '<br><br>');
+                })
+            }
+
+            function errData(err) {
+                console.log("error!");
+                console.log(err);
+            };
+        }
+
+        $(logOut).on("click", e => {
+            auth.signOut()
+            console.log("signed out");
+            $("tbody").empty()
+            $("#txtEmail").css("display", "inline");
+            $("#txtEmail").val(" ")
+            $("#txtPassword").css("display", "block");
+            $("#txtPassword").val("")
+            $("#btnLogin").css("display", "inline");
+            $("#btnSignUp").css("display", "inline");
+
+        });
+
+
+        document.getElementById('addstop').addEventListener('click', function () {
+            var newstop = $("<input>").addClass("waypoints").addClass("newwaypoint");
+            $("#addstops").append(newstop);
+            $("#addstops").append("<br>");
+        });
+
+        // var directionsService = new google.maps.DirectionsService;
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService;
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+            var myLatLng = { lat: 38.5, lng: -96.65 };
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 5,
+                center: myLatLng
+            });
+            // var clickHandler = new ClickEventHandler(map, origin);
+            directionsDisplay.setMap(map);
+
+            document.getElementById('submit').addEventListener('click', function () {
+                $("#directions-panel").show();
+                $("#campgrounds").show();
+                // var user = auth.currentUser;
+                // var uid = user.uid;
+                // var ref = database.ref("/trips");
+                // ref.orderByChild("userId").equalTo(uid).removeValue();
+                calculateAndDisplayRoute(directionsService, directionsDisplay);
+            });
+        }
+
+
+        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+            console.log(RouteBoxer);
+
+            var waypts = [];
+
+            checkboxArray = document.getElementsByClassName('waypoints');
+            // console.log(checkboxArray);
+            for (let i = 0; i < checkboxArray.length; i++) {
+                console.log($(checkboxArray[i]).val());
+                // if (checkboxArray[i] !== "undefined") {
+
+                waypts.push({
+                    location: $(checkboxArray[i]).val(),
+                    stopover: true
+                });
+
+            }
+            console.log(waypts);
+            var APIKey = "0389071e5c1c2ab06f50d48b63796d27";
+            // var cityArray = []
+            cityArray.push($("#start").val());
+            for (let i = 0; i < checkboxArray.length; i++) {
+                cityArray.push($(checkboxArray[i]).val());
+            }
+            cityArray.push($("#end").val());
+
+            var tripRef = database.ref(`/trips`).push();
+            var tripKey = tripRef.key;
+            var user = auth.currentUser;
+            console.log(user);
+            if (user != null) {
+                var tripData = {
+                    trip: cityArray,
+                    key: tripKey,
+                    userId: user.uid
+                }
+                database.ref(`/trips/${tripKey}`).update(tripData);
+            }
+
+
+            console.log(cityArray);
+            console.log(cityTemp);
+            console.log(cityArray.length);
+            console.log($(checkboxArray[0]).val());
+
+            for (var i = 0; i < cityArray.length; i++) {
+                var queryURL = `http://api.openweathermap.org/data/2.5/weather?q=${cityArray[i]}&APPID=` + APIKey;
+                console.log(cityArray[i])
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                })
+                    // We store all of the retrieved data inside of an object called "response"
+                    .then(function (response) {
+                        var Kelvin = response.main.temp;
+                        var tempConverted = (Kelvin - 273.15) * 1.80 + 32;
+                        var fixedTemp = tempConverted.toFixed(0);
+                        console.log(fixedTemp);
+
+                        // Transfer content to HTML
+                        $(".city").html("<h1>" + response.name + " Weather Details</h1>");
+                        $(".temp").text("Temperature (F): " + fixedTemp);
+
+                        console.log(cityArray[i] + "Temperature (F): " + fixedTemp);
+                        cityTemp.push(fixedTemp);
+                    });
+
+            }
+
+            directionsService.route({
+                origin: document.getElementById('start').value,
+                destination: document.getElementById('end').value,
+                waypoints: waypts,
+                optimizeWaypoints: true,
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+
+                var rboxer = new RouteBoxer();
+                var distance = 1; // km
+
+                if (status === 'OK') {
+
+                    // Box the overview path of the first route
+                    var path = response.routes[0].overview_path;
+                    var boxes = rboxer.box(path, distance);
+
+                    for (var i = 0; i < boxes.length; i++) {
+                        var bounds = boxes[i];
+                        // console.log(bounds.ma.j + ", " + bounds.ga.j);
+                        latArray[i] = bounds.ma.j;
+                        lngArray[i] = bounds.ga.j;
+
+                        // Perform search over this bounds
+                    }
+
+                    var totalboxes = latArray.length;
+                    var tripsegments = Math.floor(totalboxes / tripdays);
+                    var segmentArray = [];
+                    console.log("tripdays " + tripdays);
+                    console.log("tripsegments " + tripsegments);
+
+                    for (let i = 0; i < tripdays; i++) {
+                        segmentArray[i] = tripsegments * (i + 1);
+
+                    }
+                    console.log(segmentArray);
+
+                    for (let i = 40; i < latArray.length; i += 40) {
+
+                        var localLat = latArray[i];
+                        var localLng = lngArray[i];
+                        // console.log(localLat);
+
+                        var CampqueryURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${localLat},${localLng}&radius=20000&type=campground&key=AIzaSyBW0VP3dDB4nC53DCqJ5_D-34Dn9TcaJeA`
+                        // var GasqueryURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${localLat},${localLng}&radius=5000&type=gas_station&key=AIzaSyBW0VP3dDB4nC53DCqJ5_D-34Dn9TcaJeA`
+
+                        // console.log(tripsegments);  
+                        // if (i === 0) {
+                        $.ajax({
+                            url: CampqueryURL,
+                            method: "GET"
+                        }).then(function (boogers) {
+                            // if (i === 0 || i === latArray.length - 1) {
+                            // console.log(JSON.stringify(boogers.results[0].name));
+                            // console.log(boogers.results[0].icon);
+                            var campName = JSON.stringify(boogers.results[0].name);
+                            var campAddress = JSON.stringify(boogers.results[0].vicinity);
+                            var campRating = JSON.stringify(boogers.results[0].rating);
+
+                            var icon = boogers.results[0].icon;
+                            var campLat = boogers.results[0].geometry.location.lat;
+                            var campLng = boogers.results[0].geometry.location.lng;
+                            // marker.setIcon(icon);
+
+                            var user = auth.currentUser;
+                            var campSiteRef = database.ref(`/campsites`).push();
+                            var campSiteKey = campSiteRef.key;
+                            console.log(user);
+                            if (user != null) {
+                                var marker = new google.maps.Marker({
+                                position:
+                                {
+                                    lat: campLat,
+                                    lng: campLng
+                                },
+                                // icon: {
+                                //     path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                //     // path: https://maps.gstatic.com/mapfiles/place_api/icons/camping-71.png,
+                                //     scale: 3
+                                // },
+                                info: {
+                                    name: campName,
+                                    address: campAddress,
+                                    rating: campRating,
+                                    userId: user.uid,
+                                    key: campSiteKey
+
+                                },
+                                draggable: false,
+                                map: map
+                            });
+                        }
+                            else {
+                                var marker = new google.maps.Marker({
+                                position:
+                                {
+                                    lat: campLat,
+                                    lng: campLng
+                                },
+                                // icon: {
+                                //     path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                //     // path: https://maps.gstatic.com/mapfiles/place_api/icons/camping-71.png,
+                                //     scale: 3
+                                // },
+                                info: {
+                                    name: campName,
+                                    address: campAddress,
+                                    rating: campRating,
+                                    // userId: user.uid,
+                                    // key: campSiteKey
+
+                                },
+                                draggable: false,
+                                map: map
+                            });
+                            }
+                            
+                            
+                            database.ref(`/campsites/${campSiteKey}`).update(marker.info);
+                            marker.setIcon(icon);
+                            markers.push(marker);
+                            let campgroundNumber = i / 40;
+                            console.log(campgroundNumber);
+                            // $(`#campgrounds`).append("<br>" + campgroundNumber + ". " + marker.info.name + "<br>");
+                            $(`#campgrounds`).append("<br>" + marker.info.name + "<br>");
+                            $(`#campgrounds`).append(marker.info.address + "<br>");
+                            $(`#campgrounds`).append("Rating: " + marker.info.rating + " stars<br>");
+                            // summaryPanel.innerHTML += marker.info.name + '<br><br>';
+                            // console.log(markers);
+                            // console.log(marker.info.name);
+                        });
+                        // console.log(marker.info.name);
+                        // }
+
+                    }
+                    console.log(cityTemp[0]);
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                    var summaryPanel = document.getElementById('directions-panel');
+                    summaryPanel.innerHTML = '';
+                    // For each route, display summary information.
+                    for (var i = 0; i < route.legs.length; i++) {
+                        var routeSegment = i + 1;
+                        summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
+                            '</b><br>';
+                        summaryPanel.innerHTML += route.legs[i].start_address + ': ' + cityTemp[i] + '°F to ';
+                        summaryPanel.innerHTML += route.legs[i].end_address + ': ' + cityTemp[i + 1] + '°F<br>';
+                        summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+                    }
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBW0VP3dDB4nC53DCqJ5_D-34Dn9TcaJeA&callback=initMap">
+    </script>
+</body>
+<!-- <script type="text/javascript" src="./signup-jquery.js"></script> -->
+
 </html>
