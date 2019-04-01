@@ -435,7 +435,7 @@
             console.log($(checkboxArray[0]).val());
 
             for (var i = 0; i < cityArray.length; i++) {
-                var queryURL = `http://api.openweathermap.org/data/2.5/weather?q=${cityArray[i]}&APPID=` + APIKey;
+                var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityArray[i]}&APPID=` + APIKey;
                 console.log(cityArray[i])
 
                 $.ajax({
